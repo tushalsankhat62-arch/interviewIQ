@@ -29,7 +29,8 @@ const Auth = ({ isModel = false }) => {
       
       console.log("Sending to server:", { name, email })
       
-      const serverResponse = await axios.post("/api/auth/google", { name, email })
+      const apiUrl = import.meta.env.VITE_API_URL || '';
+const serverResponse = await axios.post(`${apiUrl}/api/auth/google`, { name, email })
       console.log("Server response:", serverResponse.data)
       
       if (serverResponse.data && serverResponse.data._id) {

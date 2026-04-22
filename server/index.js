@@ -10,9 +10,21 @@ import interviewRouter from "./routes/interview.routes.js"
 
 const app = express()
 
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://client-phi-orcin-29.vercel.app",
+    process.env.FRONTEND_URL
+].filter(Boolean);
+
 // CORS configuration
 const corsOptions = {
-    origin: "http://localhost:5173",
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Cookie"],

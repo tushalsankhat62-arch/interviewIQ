@@ -1,0 +1,5 @@
+{
+  "buildCommand": "echo 'Built locally'",
+  "outputDirectory": "dist",
+  "framework": "vite"
+}
