@@ -23,14 +23,18 @@ export const googleAuth = async (req, res) => {
         
         let token = await genToken(user._id)
         console.log("Generated token:", token ? "yes" : "no")
-        
-        res.cookie("token", token, {
+
+        // Set cookie for serverless functions
+        const cookieOptions = {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-            domain: process.env.NODE_ENV === "production" ? undefined : "localhost",
             maxAge: 7 * 24 * 60 * 60 * 1000
-        })
+        }
+
+        // Manually set cookie header for serverless functions
+        const cookieValue = `token=${token}; HttpOnly; ${cookieOptions.secure ? 'Secure;' : ''} SameSite=${cookieOptions.sameSite}; Max-Age=${cookieOptions.maxAge}`
+        res.setHeader('Set-Cookie', cookieValue)
 
         return res.status(200).json(user)
     } catch (error) {
@@ -42,15 +46,20 @@ export const googleAuth = async (req, res) => {
 export const logout = async (req,res) =>{
     try {
         console.log("Logout called")
-        res.clearCookie("token", {
+        // Clear cookie for serverless functions
+        const cookieOptions = {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-            domain: process.env.NODE_ENV === "production" ? undefined : "localhost"
-        })
+            maxAge: 0 // Expire immediately
+        }
+
+        // Manually clear cookie header for serverless functions
+        const cookieValue = `token=; HttpOnly; ${cookieOptions.secure ? 'Secure;' : ''} SameSite=${cookieOptions.sameSite}; Max-Age=${cookieOptions.maxAge}`
+        res.setHeader('Set-Cookie', cookieValue)
         return res.status(200).json({message:"logout successfully"})
     } catch (error) {
-         console.error("Logout error:", error)
-         return res.status(500).json({ message: `logout error ${error}` })
+          console.error("Logout error:", error)
+          return res.status(500).json({ message: `logout error ${error}` })
     }
 }

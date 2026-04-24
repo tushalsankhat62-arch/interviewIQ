@@ -45,9 +45,25 @@ app.use("/api/user", userRouter)
 app.use("/api/interview", interviewRouter)
 
 
-const port = process.env.PORT || 6000
+// For Vercel serverless functions
+export default app
 
-app.listen(port, () => {
-    console.log(`server is running on port ${port}`)
-    connectDb()
-})
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+    const port = process.env.PORT || 6000
+    app.listen(port, async () => {
+        console.log(`server is running on port ${port}`)
+        try {
+            await connectDb()
+        } catch (error) {
+            console.error("Database connection failed:", error)
+        }
+    })
+}
+
+// Connect to database for production
+if (process.env.NODE_ENV === 'production') {
+    connectDb().catch(error => {
+        console.error("Database connection failed:", error)
+    })
+}

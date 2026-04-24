@@ -10,6 +10,7 @@ import InterviewPage from './pages/interviewPage'
 import History from './pages/History'
 import Pricing from './pages/Pricing'
 
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || "";
 axios.defaults.withCredentials = true;
 
 const App = () => {

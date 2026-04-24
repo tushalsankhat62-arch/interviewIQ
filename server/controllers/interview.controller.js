@@ -101,6 +101,7 @@ export const analyzeResume = async (req, res) => {
 };
 
 export const generatequestion = async (req, res) => {
+    console.log('Generate question called with body:', req.body);
     try {
         let { role, experience, mode, resumeText, projects, skills } = req.body
 
